@@ -1,3 +1,6 @@
-from django.shortcuts import render
+def polls_list(request):
+    pass
 
-# Create your views here.
+
+def polls_detail(request):
+    pass
