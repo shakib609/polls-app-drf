@@ -36,5 +36,5 @@ class CreateVote(APIView):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CreateUser(generics.CreateAPIView):
+class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
