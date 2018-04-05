@@ -24,11 +24,25 @@ class PollViewSet(viewsets.ModelViewSet):
 
 
 class ChoiceList(generics.ListCreateAPIView):
+    serializer_class = ChoiceSerializer
+
     def get_queryset(self):
         queryset = Choice.objects.filter(poll_id=self.kwargs['pk'])
         return queryset
 
-    serializer_class = ChoiceSerializer
+    def post(self, request, *args, **kwargs):
+        poll = Poll.objects.get(pk=self.kwargs['pk'])
+        if request.user != poll.created_by:
+            raise PermissionDenied('You cannot create Choice for this poll.')
+        data = {
+            'poll': poll.id,
+            'choice_text': request.data.get('choice_text')
+        }
+        serializer = ChoiceSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateVote(APIView):
